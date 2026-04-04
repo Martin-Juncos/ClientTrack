@@ -1,0 +1,57 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg: 8 14 28;
+  --color-panel: 15 23 42;
+  --color-muted: 17 25 40;
+  --color-border: 84 118 161;
+  --color-copy: 226 232 240;
+  --color-subtle: 148 163 184;
+  --color-accent: 34 211 238;
+  --color-accent-2: 99 102 241;
+  --color-success: 16 185 129;
+  --color-warn: 245 158 11;
+  --color-danger: 244 63 94;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(34, 211, 238, 0.18), transparent 28%),
+    radial-gradient(circle at top right, rgba(99, 102, 241, 0.16), transparent 26%),
+    linear-gradient(180deg, rgba(8, 14, 28, 1) 0%, rgba(4, 8, 16, 1) 100%);
+  color: rgb(var(--color-copy));
+  font-family: "Space Grotesk", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.glass-panel {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.9), rgba(10, 17, 32, 0.92));
+  border: 1px solid rgba(104, 127, 168, 0.18);
+  box-shadow: 0 24px 60px rgba(2, 6, 23, 0.4);
+}

@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@shared/*": ["shared/*"],
+      "@server/*": ["server/*"]
+    }
+  },
+  "include": ["src", "server", "api", "shared", "tests"]
+}

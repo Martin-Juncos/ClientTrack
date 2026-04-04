@@ -1,0 +1,80 @@
+# ClientTrack
+
+CRM liviano para seguimiento comercial de instituciones y oportunidades de venta consultiva.
+
+## Stack
+
+- React + Vite + React Router
+- Tailwind CSS
+- Node + Express
+- MongoDB Atlas + Mongoose
+- JWT en cookie `httpOnly`
+- Preparado para Vercel
+
+## Scripts
+
+- `npm run dev`: frontend Vite + backend Express local
+- `npm run build`: build del frontend
+- `npm run lint`: lint del proyecto
+- `npm run test`: pruebas con Vitest
+
+CI recomendado:
+- `npm ci`
+- `npm run lint`
+- `npm run test`
+- `npm run build`
+
+En local, la API carga `.env` automaticamente desde la raiz del proyecto al iniciar.
+
+## MVP incluido
+
+- Login privado para 2 administradores
+- Dashboard accionable
+- CRUD de instituciones
+- CRUD de oportunidades
+- Historial de interacciones
+- Seguimientos / tareas
+- Pipeline Kanban
+- Busqueda y filtros
+- Comunicaciones salientes con email y acceso rapido a WhatsApp
+
+## Arquitectura
+
+- `src/`: frontend
+- `server/`: dominio, auth, modelos y servicios
+- `api/[...route].js`: entrada serverless para Vercel
+- `shared/`: catalogos y constantes compartidas
+
+## Despliegue
+
+- Frontend estatico en Vercel
+- Backend por funciones Node usando `api/[...route].js`
+- MongoDB Atlas con conexion segura por variables de entorno
+- `vercel.json` fija `framework: vite`, `outputDirectory: dist` y el rewrite SPA/API necesario
+
+## Checklist de deploy en Vercel
+
+1. Importar el repositorio en Vercel.
+2. Configurar Node.js `22.x`.
+3. Cargar las variables de `CONFIG.md` en `Production`, `Preview` y `Development`.
+4. Usar la URL canonica del proyecto como valor de `APP_ORIGIN`.
+5. Si usas dominios adicionales o previews custom, completar `ALLOWED_APP_ORIGINS` con una lista separada por comas.
+6. Desplegar y validar `GET /api/health` y `GET /api/ready`.
+
+Consulta [CONFIG.md](./CONFIG.md) para variables y setup.
+
+Importante para email saliente por SMTP: configurar `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` y `EMAIL_FROM`.
+
+Si usas Gmail SMTP, el setup recomendado es `smtp.gmail.com:465`, `SMTP_SECURE=true`, `SMTP_USER=<tu_gmail>` y `SMTP_PASS=<app_password_de_google>`.
+
+Con Gmail, `EMAIL_FROM` debe coincidir con la cuenta autenticada en `SMTP_USER`, por ejemplo `ClientTrack <tu_cuenta@gmail.com>`.
+
+## Endpoints operativos
+
+- `GET /api/health`: liveness del proceso.
+- `GET /api/ready`: readiness real contra MongoDB.
+
+## Notas de seguridad
+
+- La API acepta sesion solo por cookie `httpOnly`; no usa bearer tokens para acceso autenticado.
+- En `production`, la app rechaza placeholders obvios en secretos y credenciales para evitar despliegues incompletos.

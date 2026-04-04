@@ -1,0 +1,77 @@
+import { describe, expect, it } from "vitest";
+import { parseEnv } from "../server/config/envSchema.js";
+
+const baseEnv = {
+  NODE_ENV: "test",
+  PORT: "3001",
+  APP_ORIGIN: "http://localhost:5173",
+  MONGODB_URI: "mongodb+srv://user:pass@cluster.mongodb.net/clienttrack",
+  JWT_SECRET: "super-secret-key-with-24-chars",
+  JWT_EXPIRES_IN: "7d",
+  COOKIE_NAME: "clienttrack_session",
+  ADMIN_USER_1_NAME: "Admin Uno",
+  ADMIN_USER_1_EMAIL: "admin1@example.com",
+  ADMIN_USER_1_PASSWORD: "password123",
+  ADMIN_USER_2_NAME: "Admin Dos",
+  ADMIN_USER_2_EMAIL: "admin2@example.com",
+  ADMIN_USER_2_PASSWORD: "password456"
+};
+
+describe("env schema", () => {
+  it("falla si la configuracion SMTP esta incompleta", () => {
+    expect(() =>
+      parseEnv({
+        ...baseEnv,
+        SMTP_HOST: "smtp.gmail.com",
+        EMAIL_FROM: "ClientTrack <test@gmail.com>"
+      })
+    ).toThrow(/Configuracion SMTP incompleta/i);
+  });
+
+  it("deriva SMTP_SECURE=true cuando el puerto es 465", () => {
+    const env = parseEnv({
+      ...baseEnv,
+      SMTP_HOST: "smtp.gmail.com",
+      SMTP_PORT: "465",
+      SMTP_USER: "test@gmail.com",
+      SMTP_PASS: "app-password",
+      EMAIL_FROM: "ClientTrack <test@gmail.com>"
+    });
+
+    expect(env.smtp.enabled).toBe(true);
+    expect(env.smtp.secure).toBe(true);
+  });
+
+  it("permite desactivar SMTP por completo sin romper el arranque", () => {
+    const env = parseEnv(baseEnv);
+
+    expect(env.smtp.enabled).toBe(false);
+    expect(env.smtp.secure).toBe(false);
+  });
+
+  it("normaliza origins adicionales para entornos con previews", () => {
+    const env = parseEnv({
+      ...baseEnv,
+      ALLOWED_APP_ORIGINS: "https://clienttrack.example.com, https://preview-clienttrack.vercel.app"
+    });
+
+    expect(env.allowedAppOrigins).toEqual([
+      "https://clienttrack.example.com",
+      "https://preview-clienttrack.vercel.app"
+    ]);
+  });
+
+  it("rechaza placeholders obvios en produccion", () => {
+    expect(() =>
+      parseEnv({
+        ...baseEnv,
+        NODE_ENV: "production",
+        JWT_SECRET: "replace_with_a_long_random_secret",
+        ADMIN_USER_1_EMAIL: "admin1@example.com",
+        ADMIN_USER_1_PASSWORD: "replace_with_a_strong_password",
+        ADMIN_USER_2_EMAIL: "admin2@example.com",
+        ADMIN_USER_2_PASSWORD: "replace_with_a_strong_password"
+      })
+    ).toThrow(/contiene un valor de ejemplo/i);
+  });
+});
