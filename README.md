@@ -44,6 +44,12 @@ En local, la API carga `.env` automaticamente desde la raiz del proyecto al inic
 - `server/`: dominio, auth, modelos y servicios
 - `api/[...route].js`: entrada serverless para Vercel
 - `shared/`: catalogos y constantes compartidas
+- `public/branding/logo.gif`: asset fuente del logo para favicon e iconos multiplataforma
+
+## Branding
+
+- Los iconos de navegador, Apple touch icon, Android y Windows se generan desde `public/branding/logo.gif`.
+- Para regenerarlos si cambia el logo: `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\generate-brand-icons.ps1`
 
 ## Despliegue
 

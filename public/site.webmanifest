@@ -1,0 +1,23 @@
+{
+  "name": "ClientTrack",
+  "short_name": "ClientTrack",
+  "description": "CRM privado para seguimiento comercial, contexto de relacion y proximas acciones.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a1220",
+  "theme_color": "#0a1220",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
