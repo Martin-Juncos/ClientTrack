@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { PageHeader } from "../components/ui/PageHeader.jsx";
 import { Card } from "../components/ui/Card.jsx";
 import { Button } from "../components/ui/Button.jsx";
+import { ConfirmationModal } from "../components/ui/ConfirmationModal.jsx";
 import { LoaderPanel } from "../components/ui/LoaderPanel.jsx";
 import { ErrorState } from "../components/ui/ErrorState.jsx";
 import { CommunicationPanel } from "../modules/communications/CommunicationPanel.jsx";
@@ -35,6 +36,9 @@ export function OpportunityDetailPage() {
   const [actionError, setActionError] = useState("");
   const [selectedContactId, setSelectedContactId] = useState("");
   const [preferredChannel, setPreferredChannel] = useState("email");
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
 
   const loadPage = useCallback(async () => {
     try {
@@ -68,20 +72,31 @@ export function OpportunityDetailPage() {
     loadPage();
   }, [loadPage]);
 
-  async function handleDelete() {
-    const confirmed = window.confirm("Esto eliminara la oportunidad y todas sus interacciones. Deseas continuar?");
+  function handleOpenDeleteModal() {
+    setDeleteError("");
+    setIsDeleteModalOpen(true);
+  }
 
-    if (!confirmed) {
+  function handleCloseDeleteModal() {
+    if (isDeleting) {
       return;
     }
 
-    setActionError("");
+    setDeleteError("");
+    setIsDeleteModalOpen(false);
+  }
+
+  async function handleDelete() {
+    setDeleteError("");
+    setIsDeleting(true);
 
     try {
       await opportunitiesApi.remove(id);
       navigate("/oportunidades");
     } catch (currentError) {
-      setActionError(currentError.message);
+      setDeleteError(currentError.message);
+    } finally {
+      setIsDeleting(false);
     }
   }
 
@@ -188,6 +203,7 @@ export function OpportunityDetailPage() {
       ...contact
     })) ?? [])
   ];
+  const deleteDescription = `Se eliminara esta oportunidad junto con sus interacciones, seguimientos y comunicaciones asociadas. Esta accion no se puede deshacer.`;
 
   return (
     <div className="space-y-6">
@@ -200,7 +216,7 @@ export function OpportunityDetailPage() {
             <Button as={Link} to={`/oportunidades/${id}/editar`} variant="secondary">
               Editar
             </Button>
-            <Button variant="ghost" onClick={handleDelete}>
+            <Button variant="ghost" onClick={handleOpenDeleteModal}>
               Eliminar
             </Button>
           </>
@@ -315,6 +331,17 @@ export function OpportunityDetailPage() {
         onSelectedContactChange={setSelectedContactId}
         composerTitle="Comunicaciones de la oportunidad"
         composerDescription="Envios y aperturas vinculadas a este caso comercial."
+      />
+
+      <ConfirmationModal
+        open={isDeleteModalOpen}
+        title="Eliminar oportunidad"
+        description={deleteDescription}
+        confirmLabel="Eliminar oportunidad"
+        onConfirm={handleDelete}
+        onCancel={handleCloseDeleteModal}
+        loading={isDeleting}
+        error={deleteError}
       />
     </div>
   );

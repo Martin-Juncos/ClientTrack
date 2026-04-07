@@ -3,7 +3,8 @@ import { classNames } from "../../lib/utils/classNames.js";
 const variants = {
   primary: "bg-accent/90 text-slate-950 hover:bg-accent shadow-glow",
   secondary: "bg-panel text-copy hover:bg-panel/80 border border-white/10",
-  ghost: "bg-transparent text-subtle hover:bg-white/5 hover:text-copy"
+  ghost: "bg-transparent text-subtle hover:bg-white/5 hover:text-copy",
+  danger: "bg-rose-500/90 text-white hover:bg-rose-500 shadow-glow"
 };
 
 export function Button({

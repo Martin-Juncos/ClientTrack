@@ -13,6 +13,7 @@ import {
 import { PageHeader } from "../components/ui/PageHeader.jsx";
 import { Card } from "../components/ui/Card.jsx";
 import { Button } from "../components/ui/Button.jsx";
+import { ConfirmationModal } from "../components/ui/ConfirmationModal.jsx";
 import { LoaderPanel } from "../components/ui/LoaderPanel.jsx";
 import { ErrorState } from "../components/ui/ErrorState.jsx";
 import { CommunicationPanel } from "../modules/communications/CommunicationPanel.jsx";
@@ -35,9 +36,11 @@ export function InstitutionDetailPage() {
   const [opportunities, setOpportunities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [actionError, setActionError] = useState("");
   const [selectedContactId, setSelectedContactId] = useState("");
   const [preferredChannel, setPreferredChannel] = useState("email");
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
 
   const loadInstitutionDetail = useCallback(async () => {
     try {
@@ -60,20 +63,31 @@ export function InstitutionDetailPage() {
     loadInstitutionDetail();
   }, [loadInstitutionDetail]);
 
-  async function handleDelete() {
-    const confirmed = window.confirm("Esto eliminara la institucion y sus oportunidades asociadas. Deseas continuar?");
+  function handleOpenDeleteModal() {
+    setDeleteError("");
+    setIsDeleteModalOpen(true);
+  }
 
-    if (!confirmed) {
+  function handleCloseDeleteModal() {
+    if (isDeleting) {
       return;
     }
 
-    setActionError("");
+    setDeleteError("");
+    setIsDeleteModalOpen(false);
+  }
+
+  async function handleDelete() {
+    setDeleteError("");
+    setIsDeleting(true);
 
     try {
       await institutionsApi.remove(id);
       navigate("/instituciones");
     } catch (currentError) {
-      setActionError(currentError.message);
+      setDeleteError(currentError.message);
+    } finally {
+      setIsDeleting(false);
     }
   }
 
@@ -96,6 +110,13 @@ export function InstitutionDetailPage() {
       ...contact
     }))
   ];
+  const opportunityCount = opportunities.length;
+  const deleteDescription =
+    opportunityCount > 0
+      ? `Se eliminara ${institution.name}, ${opportunityCount} ${
+          opportunityCount === 1 ? "oportunidad asociada" : "oportunidades asociadas"
+        } y todos los seguimientos, interacciones y comunicaciones vinculados. Esta accion no se puede deshacer.`
+      : `Se eliminara ${institution.name} y todos los seguimientos, interacciones y comunicaciones vinculados. Actualmente no tiene oportunidades asociadas. Esta accion no se puede deshacer.`;
 
   return (
     <div className="space-y-6">
@@ -111,18 +132,12 @@ export function InstitutionDetailPage() {
             <Button as={Link} to={`/oportunidades/nueva?institutionId=${id}`}>
               Nueva oportunidad
             </Button>
-            <Button variant="ghost" onClick={handleDelete}>
+            <Button variant="ghost" onClick={handleOpenDeleteModal}>
               Eliminar
             </Button>
           </>
         }
       />
-
-      {actionError ? (
-        <Card>
-          <p className="text-sm text-danger">{actionError}</p>
-        </Card>
-      ) : null}
 
       <section className="grid gap-6 xl:grid-cols-[0.95fr,1.05fr]">
         <Card className="space-y-4">
@@ -291,6 +306,17 @@ export function InstitutionDetailPage() {
         selectedContactId={selectedContactId}
         preferredChannel={preferredChannel}
         onSelectedContactChange={setSelectedContactId}
+      />
+
+      <ConfirmationModal
+        open={isDeleteModalOpen}
+        title="Eliminar institucion"
+        description={deleteDescription}
+        confirmLabel="Eliminar institucion"
+        onConfirm={handleDelete}
+        onCancel={handleCloseDeleteModal}
+        loading={isDeleting}
+        error={deleteError}
       />
     </div>
   );
