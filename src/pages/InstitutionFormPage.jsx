@@ -131,8 +131,13 @@ export function InstitutionFormPage({ mode }) {
         additionalContacts: form.additionalContacts.map(sanitizeContact)
       };
 
-      const result = mode === "edit" ? await institutionsApi.update(id, payload) : await institutionsApi.create(payload);
-      navigate(`/instituciones/${result._id ?? result.id}`);
+      if (mode === "edit") {
+        await institutionsApi.update(id, payload);
+      } else {
+        await institutionsApi.create(payload);
+      }
+
+      navigate("/instituciones");
     } catch (submitError) {
       if (Array.isArray(submitError.details)) {
         const mapped = mapValidationDetails(submitError.details);
