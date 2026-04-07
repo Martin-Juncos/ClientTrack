@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { HiBars3, HiXMark } from "react-icons/hi2";
+import { HiXMark } from "react-icons/hi2";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth.js";
 import { Button } from "../ui/Button.jsx";
@@ -87,11 +87,19 @@ export function AppShell() {
               <Button
                 aria-expanded={isMobileMenuOpen}
                 aria-label={isMobileMenuOpen ? "Cerrar menu" : "Abrir menu"}
-                className="h-11 w-11 rounded-2xl px-0"
+                className="h-12 w-12 rounded-2xl px-0"
                 variant="secondary"
                 onClick={() => setIsMobileMenuOpen((current) => !current)}
               >
-                {isMobileMenuOpen ? <HiXMark className="h-5 w-5" /> : <HiBars3 className="h-5 w-5" />}
+                {isMobileMenuOpen ? (
+                  <HiXMark className="h-7 w-7 text-copy" strokeWidth={2.4} />
+                ) : (
+                  <span className="flex flex-col items-center justify-center gap-[3px] text-copy">
+                    <span className="block h-[2.5px] w-5 rounded-full bg-current" />
+                    <span className="block h-[2.5px] w-5 rounded-full bg-current" />
+                    <span className="block h-[2.5px] w-5 rounded-full bg-current" />
+                  </span>
+                )}
               </Button>
             </div>
 
