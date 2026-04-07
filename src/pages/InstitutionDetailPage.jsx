@@ -40,6 +40,16 @@ function createWhatsappUrl(phone) {
   return `https://wa.me/${normalizedPhone}`;
 }
 
+function createGmailComposeUrl(email) {
+  const normalizedEmail = String(email ?? "").trim();
+
+  if (!normalizedEmail) {
+    return "";
+  }
+
+  return `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(normalizedEmail)}`;
+}
+
 export function InstitutionDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -196,19 +206,39 @@ export function InstitutionDetailPage() {
                     </p>
                     <p className="mt-1 text-sm text-subtle">{institution.primaryContact.role || "Sin cargo cargado"}</p>
                   </div>
-                  {institution.primaryContact.phone ? (
-                    <Button
-                      as="a"
-                      href={createWhatsappUrl(institution.primaryContact.phone)}
-                      target="_blank"
-                      rel="noreferrer"
-                      variant="secondary"
-                      size="sm"
-                    >
-                      <FaWhatsapp className="h-3.5 w-3.5" />
-                      WhatsApp
-                    </Button>
-                  ) : null}
+                  <div className="flex flex-wrap items-center justify-end gap-2">
+                    {institution.primaryContact.email ? (
+                      <Button
+                        as="a"
+                        href={createGmailComposeUrl(institution.primaryContact.email)}
+                        target="_blank"
+                        rel="noreferrer"
+                        variant="secondary"
+                        size="sm"
+                      >
+                        <FaEnvelope className="h-3.5 w-3.5" />
+                        Email
+                      </Button>
+                    ) : (
+                      <Button type="button" variant="secondary" size="sm" disabled>
+                        <FaEnvelope className="h-3.5 w-3.5" />
+                        Email
+                      </Button>
+                    )}
+                    {institution.primaryContact.phone ? (
+                      <Button
+                        as="a"
+                        href={createWhatsappUrl(institution.primaryContact.phone)}
+                        target="_blank"
+                        rel="noreferrer"
+                        variant="secondary"
+                        size="sm"
+                      >
+                        <FaWhatsapp className="h-3.5 w-3.5" />
+                        WhatsApp
+                      </Button>
+                    ) : null}
+                  </div>
                 </div>
                 <div className="mt-3 space-y-1 text-sm text-subtle">
                   <p className="flex items-center gap-2">
@@ -237,19 +267,39 @@ export function InstitutionDetailPage() {
                             </p>
                             <p className="mt-1 text-xs text-subtle">{contact.role || "Sin cargo cargado"}</p>
                           </div>
-                          {contact.phone ? (
-                            <Button
-                              as="a"
-                              href={createWhatsappUrl(contact.phone)}
-                              target="_blank"
-                              rel="noreferrer"
-                              variant="secondary"
-                              size="sm"
-                            >
-                              <FaWhatsapp className="h-3.5 w-3.5" />
-                              WhatsApp
-                            </Button>
-                          ) : null}
+                          <div className="flex flex-wrap items-center justify-end gap-2">
+                            {contact.email ? (
+                              <Button
+                                as="a"
+                                href={createGmailComposeUrl(contact.email)}
+                                target="_blank"
+                                rel="noreferrer"
+                                variant="secondary"
+                                size="sm"
+                              >
+                                <FaEnvelope className="h-3.5 w-3.5" />
+                                Email
+                              </Button>
+                            ) : (
+                              <Button type="button" variant="secondary" size="sm" disabled>
+                                <FaEnvelope className="h-3.5 w-3.5" />
+                                Email
+                              </Button>
+                            )}
+                            {contact.phone ? (
+                              <Button
+                                as="a"
+                                href={createWhatsappUrl(contact.phone)}
+                                target="_blank"
+                                rel="noreferrer"
+                                variant="secondary"
+                                size="sm"
+                              >
+                                <FaWhatsapp className="h-3.5 w-3.5" />
+                                WhatsApp
+                              </Button>
+                            ) : null}
+                          </div>
                         </div>
                         <div className="mt-3 space-y-1 text-xs text-subtle">
                           <p className="flex items-center gap-2">

@@ -143,4 +143,17 @@ describe("InstitutionDetailPage", () => {
     expect(whatsappLink).toHaveAttribute("href", "https://wa.me/123456");
     expect(whatsappLink).toHaveAttribute("target", "_blank");
   });
+
+  it("muestra un acceso directo de Gmail para el contacto principal", async () => {
+    renderPage();
+
+    expect(await screen.findByRole("heading", { name: "Clinica Central" })).toBeInTheDocument();
+
+    const emailLink = screen.getByRole("link", { name: /Email/i });
+    expect(emailLink).toHaveAttribute(
+      "href",
+      "https://mail.google.com/mail/?view=cm&fs=1&to=ana%40example.com"
+    );
+    expect(emailLink).toHaveAttribute("target", "_blank");
+  });
 });
