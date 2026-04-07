@@ -66,10 +66,6 @@ vi.mock("../src/lib/api/tasksApi.js", () => ({
   }
 }));
 
-vi.mock("../src/modules/communications/CommunicationPanel.jsx", () => ({
-  CommunicationPanel: () => <div>Communication panel</div>
-}));
-
 vi.mock("../src/modules/opportunities/InteractionsTimeline.jsx", () => ({
   InteractionsTimeline: () => <div>Interactions timeline</div>
 }));
@@ -142,7 +138,7 @@ describe("OpportunityDetailPage", () => {
 
     const dialog = screen.getByRole("dialog", { name: "Eliminar oportunidad" });
     expect(dialog).toBeInTheDocument();
-    expect(within(dialog).getByText(/interacciones, seguimientos y comunicaciones asociadas/i)).toBeInTheDocument();
+    expect(within(dialog).getByText(/interacciones y seguimientos asociados/i)).toBeInTheDocument();
   });
 
   it("cancela el borrado sin llamar a la API", async () => {

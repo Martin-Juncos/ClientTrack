@@ -18,35 +18,11 @@ const baseEnv = {
 };
 
 describe("env schema", () => {
-  it("falla si la configuracion SMTP esta incompleta", () => {
-    expect(() =>
-      parseEnv({
-        ...baseEnv,
-        SMTP_HOST: "smtp.gmail.com",
-        EMAIL_FROM: "ClientTrack <test@gmail.com>"
-      })
-    ).toThrow(/Configuracion SMTP incompleta/i);
-  });
-
-  it("deriva SMTP_SECURE=true cuando el puerto es 465", () => {
-    const env = parseEnv({
-      ...baseEnv,
-      SMTP_HOST: "smtp.gmail.com",
-      SMTP_PORT: "465",
-      SMTP_USER: "test@gmail.com",
-      SMTP_PASS: "app-password",
-      EMAIL_FROM: "ClientTrack <test@gmail.com>"
-    });
-
-    expect(env.smtp.enabled).toBe(true);
-    expect(env.smtp.secure).toBe(true);
-  });
-
-  it("permite desactivar SMTP por completo sin romper el arranque", () => {
+  it("arranca sin configuracion SMTP ni objetos derivados", () => {
     const env = parseEnv(baseEnv);
 
-    expect(env.smtp.enabled).toBe(false);
-    expect(env.smtp.secure).toBe(false);
+    expect(env).not.toHaveProperty("smtp");
+    expect(env.APP_ORIGIN).toBe("http://localhost:5173");
   });
 
   it("normaliza origins adicionales para entornos con previews", () => {

@@ -6,7 +6,6 @@ import { Button } from "../components/ui/Button.jsx";
 import { ConfirmationModal } from "../components/ui/ConfirmationModal.jsx";
 import { LoaderPanel } from "../components/ui/LoaderPanel.jsx";
 import { ErrorState } from "../components/ui/ErrorState.jsx";
-import { CommunicationPanel } from "../modules/communications/CommunicationPanel.jsx";
 import { InteractionsTimeline } from "../modules/opportunities/InteractionsTimeline.jsx";
 import { TaskComposer } from "../modules/tasks/TaskComposer.jsx";
 import { useMetaOptions } from "../hooks/useMetaOptions.js";
@@ -34,8 +33,6 @@ export function OpportunityDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [actionError, setActionError] = useState("");
-  const [selectedContactId, setSelectedContactId] = useState("");
-  const [preferredChannel, setPreferredChannel] = useState("email");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
@@ -193,17 +190,7 @@ export function OpportunityDetailPage() {
     return <LoaderPanel label="Cargando oportunidad..." />;
   }
 
-  const communicationContacts = [
-    {
-      id: opportunity.institutionId?.primaryContact?._id ?? "primary-contact",
-      ...opportunity.institutionId?.primaryContact
-    },
-    ...((opportunity.institutionId?.additionalContacts ?? []).map((contact) => ({
-      id: contact._id,
-      ...contact
-    })) ?? [])
-  ];
-  const deleteDescription = `Se eliminara esta oportunidad junto con sus interacciones, seguimientos y comunicaciones asociadas. Esta accion no se puede deshacer.`;
+  const deleteDescription = `Se eliminara esta oportunidad junto con sus interacciones y seguimientos asociados. Esta accion no se puede deshacer.`;
 
   return (
     <div className="space-y-6">
@@ -274,30 +261,6 @@ export function OpportunityDetailPage() {
             <p className="mt-1">{opportunity.institutionId?.primaryContact?.role || "Sin cargo cargado"}</p>
             <p className="mt-3">{opportunity.institutionId?.primaryContact?.email || "Sin email"}</p>
             <p className="mt-1">{opportunity.institutionId?.primaryContact?.phone || "Sin telefono"}</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Button
-                size="sm"
-                variant="secondary"
-                disabled={!opportunity.institutionId?.primaryContact?.email}
-                onClick={() => {
-                  setSelectedContactId(opportunity.institutionId?.primaryContact?._id ?? "primary-contact");
-                  setPreferredChannel("email");
-                }}
-              >
-                Email
-              </Button>
-              <Button
-                size="sm"
-                variant="secondary"
-                disabled={!opportunity.institutionId?.primaryContact?.phone}
-                onClick={() => {
-                  setSelectedContactId(opportunity.institutionId?.primaryContact?._id ?? "primary-contact");
-                  setPreferredChannel("whatsapp");
-                }}
-              >
-                WhatsApp
-              </Button>
-            </div>
           </div>
         </Card>
 
@@ -320,17 +283,6 @@ export function OpportunityDetailPage() {
         onSubmit={handleCreateInteraction}
         onDelete={handleDeleteInteraction}
         interactionTypes={meta.catalogs.interactionTypes}
-      />
-
-      <CommunicationPanel
-        institutionId={opportunity.institutionId?._id}
-        opportunityId={opportunity._id}
-        contacts={communicationContacts}
-        selectedContactId={selectedContactId}
-        preferredChannel={preferredChannel}
-        onSelectedContactChange={setSelectedContactId}
-        composerTitle="Comunicaciones de la oportunidad"
-        composerDescription="Envios y aperturas vinculadas a este caso comercial."
       />
 
       <ConfirmationModal

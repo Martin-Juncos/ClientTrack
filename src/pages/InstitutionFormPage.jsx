@@ -23,6 +23,8 @@ const fieldLabelMap = {
   type: "Tipo de institucion",
   city: "Ciudad",
   province: "Provincia / ubicacion",
+  phone: "Telefono institucional",
+  address: "Direccion institucional",
   leadSource: "Fuente del lead",
   responsibleId: "Responsable",
   notes: "Observaciones generales",

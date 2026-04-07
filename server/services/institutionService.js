@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import { ApiError } from "../http/apiError.js";
-import { Communication } from "../models/Communication.js";
 import { Institution } from "../models/Institution.js";
 import { Interaction } from "../models/Interaction.js";
 import { Opportunity } from "../models/Opportunity.js";
@@ -25,6 +24,8 @@ function buildSearchFilter(search) {
       { name: regex },
       { city: regex },
       { province: regex },
+      { phone: regex },
+      { address: regex },
       { leadSource: regex },
       { "primaryContact.firstName": regex },
       { "primaryContact.lastName": regex },
@@ -129,12 +130,10 @@ export async function deleteInstitution(id) {
         .lean();
       const opportunityIds = opportunities.map((item) => item._id);
 
-      await Communication.deleteMany({ institutionId }).session(session);
       await Interaction.deleteMany({ institutionId }).session(session);
       await Task.deleteMany({ institutionId }).session(session);
 
       if (opportunityIds.length > 0) {
-        await Communication.deleteMany({ opportunityId: { $in: opportunityIds } }).session(session);
         await Interaction.deleteMany({ opportunityId: { $in: opportunityIds } }).session(session);
         await Task.deleteMany({ opportunityId: { $in: opportunityIds } }).session(session);
       }

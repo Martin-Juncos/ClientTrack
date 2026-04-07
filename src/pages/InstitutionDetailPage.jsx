@@ -7,7 +7,9 @@ import {
   FaLinkedinIn,
   FaPhone,
   FaTiktok,
+  FaLocationDot,
   FaUserGroup,
+  FaWhatsapp,
   FaXTwitter
 } from "react-icons/fa6";
 import { PageHeader } from "../components/ui/PageHeader.jsx";
@@ -16,7 +18,6 @@ import { Button } from "../components/ui/Button.jsx";
 import { ConfirmationModal } from "../components/ui/ConfirmationModal.jsx";
 import { LoaderPanel } from "../components/ui/LoaderPanel.jsx";
 import { ErrorState } from "../components/ui/ErrorState.jsx";
-import { CommunicationPanel } from "../modules/communications/CommunicationPanel.jsx";
 import { institutionsApi } from "../lib/api/institutionsApi.js";
 import { opportunitiesApi } from "../lib/api/opportunitiesApi.js";
 import { formatInstitutionType, formatOpportunityState, formatSolutionType } from "../lib/utils/formatters.js";
@@ -29,6 +30,16 @@ const socialEntries = [
   { key: "tiktok", label: "TikTok", icon: FaTiktok }
 ];
 
+function createWhatsappUrl(phone) {
+  const normalizedPhone = String(phone ?? "").replace(/[^\d]/g, "");
+
+  if (!normalizedPhone) {
+    return "";
+  }
+
+  return `https://wa.me/${normalizedPhone}`;
+}
+
 export function InstitutionDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -36,8 +47,6 @@ export function InstitutionDetailPage() {
   const [opportunities, setOpportunities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [selectedContactId, setSelectedContactId] = useState("");
-  const [preferredChannel, setPreferredChannel] = useState("email");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
@@ -100,23 +109,13 @@ export function InstitutionDetailPage() {
   }
 
   const visibleSocials = socialEntries.filter(({ key }) => institution.socials?.[key]);
-  const communicationContacts = [
-    {
-      id: institution.primaryContact._id ?? "primary-contact",
-      ...institution.primaryContact
-    },
-    ...(institution.additionalContacts ?? []).map((contact) => ({
-      id: contact._id,
-      ...contact
-    }))
-  ];
   const opportunityCount = opportunities.length;
   const deleteDescription =
     opportunityCount > 0
       ? `Se eliminara ${institution.name}, ${opportunityCount} ${
           opportunityCount === 1 ? "oportunidad asociada" : "oportunidades asociadas"
-        } y todos los seguimientos, interacciones y comunicaciones vinculados. Esta accion no se puede deshacer.`
-      : `Se eliminara ${institution.name} y todos los seguimientos, interacciones y comunicaciones vinculados. Actualmente no tiene oportunidades asociadas. Esta accion no se puede deshacer.`;
+        } y todos los seguimientos e interacciones vinculados. Esta accion no se puede deshacer.`
+      : `Se eliminara ${institution.name} y todos los seguimientos e interacciones vinculados. Actualmente no tiene oportunidades asociadas. Esta accion no se puede deshacer.`;
 
   return (
     <div className="space-y-6">
@@ -139,144 +138,158 @@ export function InstitutionDetailPage() {
         }
       />
 
-      <section className="grid gap-6 xl:grid-cols-[0.95fr,1.05fr]">
-        <Card className="space-y-4">
+      <section className="space-y-6">
+        <Card className="space-y-6">
           <h2 className="text-lg font-semibold text-white">Datos generales</h2>
-          <dl className="grid gap-3 text-sm text-subtle md:grid-cols-2">
-            <div>
-              <dt className="text-xs uppercase tracking-[0.24em] text-subtle/80">Tipo</dt>
-              <dd className="mt-1">{formatInstitutionType(institution.type)}</dd>
+          <div className="grid gap-6 xl:grid-cols-2">
+            <div className="space-y-6">
+              <dl className="grid gap-3 text-sm text-subtle sm:grid-cols-2">
+                <div>
+                  <dt className="text-xs uppercase tracking-[0.24em] text-subtle/80">Tipo</dt>
+                  <dd className="mt-1">{formatInstitutionType(institution.type)}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs uppercase tracking-[0.24em] text-subtle/80">Responsable</dt>
+                  <dd className="mt-1">{institution.responsibleId?.name ?? "-"}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs uppercase tracking-[0.24em] text-subtle/80">Ciudad</dt>
+                  <dd className="mt-1">{institution.city || "-"}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs uppercase tracking-[0.24em] text-subtle/80">Telefono institucional</dt>
+                  <dd className="mt-1">{institution.phone || "-"}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs uppercase tracking-[0.24em] text-subtle/80">Direccion</dt>
+                  <dd className="mt-1">{institution.address || "-"}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs uppercase tracking-[0.24em] text-subtle/80">Fuente</dt>
+                  <dd className="mt-1">{institution.leadSource || "-"}</dd>
+                </div>
+              </dl>
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-4">
+                <p className="text-sm font-semibold text-white">Canales institucionales</p>
+                <div className="mt-3 space-y-2 text-sm text-subtle">
+                  <p className="flex items-center gap-2">
+                    <FaPhone className="h-3.5 w-3.5 text-subtle" />
+                    {institution.phone || "-"}
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <FaLocationDot className="h-3.5 w-3.5 text-subtle" />
+                    {institution.address || "-"}
+                  </p>
+                </div>
+              </div>
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm text-subtle">
+                {institution.notes || "Sin observaciones generales."}
+              </div>
             </div>
-            <div>
-              <dt className="text-xs uppercase tracking-[0.24em] text-subtle/80">Responsable</dt>
-              <dd className="mt-1">{institution.responsibleId?.name ?? "-"}</dd>
-            </div>
-            <div>
-              <dt className="text-xs uppercase tracking-[0.24em] text-subtle/80">Ciudad</dt>
-              <dd className="mt-1">{institution.city || "-"}</dd>
-            </div>
-            <div>
-              <dt className="text-xs uppercase tracking-[0.24em] text-subtle/80">Fuente</dt>
-              <dd className="mt-1">{institution.leadSource || "-"}</dd>
-            </div>
-          </dl>
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-4">
-            <p className="text-sm font-semibold text-white">
-              {institution.primaryContact.firstName} {institution.primaryContact.lastName}
-            </p>
-            <p className="mt-1 text-sm text-subtle">{institution.primaryContact.role || "Sin cargo cargado"}</p>
-            <div className="mt-3 space-y-1 text-sm text-subtle">
-              <p className="flex items-center gap-2">
-                <FaEnvelope className="h-3.5 w-3.5 text-subtle" />
-                {institution.primaryContact.email || "-"}
-              </p>
-              <p className="flex items-center gap-2">
-                <FaPhone className="h-3.5 w-3.5 text-subtle" />
-                {institution.primaryContact.phone || "-"}
-              </p>
-            </div>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Button
-                size="sm"
-                variant="secondary"
-                disabled={!institution.primaryContact.email}
-                onClick={() => {
-                  setSelectedContactId(institution.primaryContact._id ?? "primary-contact");
-                  setPreferredChannel("email");
-                }}
-              >
-                Email
-              </Button>
-              <Button
-                size="sm"
-                variant="secondary"
-                disabled={!institution.primaryContact.phone}
-                onClick={() => {
-                  setSelectedContactId(institution.primaryContact._id ?? "primary-contact");
-                  setPreferredChannel("whatsapp");
-                }}
-              >
-                WhatsApp
-              </Button>
-            </div>
-          </div>
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-4">
-            <div className="flex items-center gap-2">
-              <FaUserGroup className="h-4 w-4 text-accent" />
-              <p className="text-sm font-semibold text-white">Contactos adicionales</p>
-            </div>
-            {institution.additionalContacts?.length ? (
-              <div className="mt-4 space-y-3">
-                {institution.additionalContacts.map((contact) => (
-                  <article key={contact._id} className="rounded-2xl border border-white/10 bg-black/10 p-3">
-                    <p className="text-sm font-medium text-white">
-                      {contact.firstName} {contact.lastName}
+
+            <div className="space-y-6">
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-white">
+                      {institution.primaryContact.firstName} {institution.primaryContact.lastName}
                     </p>
-                    <p className="mt-1 text-xs text-subtle">{contact.role || "Sin cargo cargado"}</p>
-                    <div className="mt-3 space-y-1 text-xs text-subtle">
-                      <p className="flex items-center gap-2">
-                        <FaEnvelope className="h-3 w-3" />
-                        {contact.email || "-"}
-                      </p>
-                      <p className="flex items-center gap-2">
-                        <FaPhone className="h-3 w-3" />
-                        {contact.phone || "-"}
-                      </p>
-                    </div>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        disabled={!contact.email}
-                        onClick={() => {
-                          setSelectedContactId(contact._id);
-                          setPreferredChannel("email");
-                        }}
-                      >
-                        Email
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        disabled={!contact.phone}
-                        onClick={() => {
-                          setSelectedContactId(contact._id);
-                          setPreferredChannel("whatsapp");
-                        }}
-                      >
-                        WhatsApp
-                      </Button>
-                    </div>
-                  </article>
-                ))}
+                    <p className="mt-1 text-sm text-subtle">{institution.primaryContact.role || "Sin cargo cargado"}</p>
+                  </div>
+                  {institution.primaryContact.phone ? (
+                    <Button
+                      as="a"
+                      href={createWhatsappUrl(institution.primaryContact.phone)}
+                      target="_blank"
+                      rel="noreferrer"
+                      variant="secondary"
+                      size="sm"
+                    >
+                      <FaWhatsapp className="h-3.5 w-3.5" />
+                      WhatsApp
+                    </Button>
+                  ) : null}
+                </div>
+                <div className="mt-3 space-y-1 text-sm text-subtle">
+                  <p className="flex items-center gap-2">
+                    <FaEnvelope className="h-3.5 w-3.5 text-subtle" />
+                    {institution.primaryContact.email || "-"}
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <FaPhone className="h-3.5 w-3.5 text-subtle" />
+                    {institution.primaryContact.phone || "-"}
+                  </p>
+                </div>
               </div>
-            ) : (
-              <p className="mt-3 text-sm text-subtle">No se cargaron contactos secundarios.</p>
-            )}
-          </div>
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-4">
-            <p className="text-sm font-semibold text-white">Redes institucionales</p>
-            {visibleSocials.length ? (
-              <div className="mt-4 flex flex-wrap gap-2">
-                {visibleSocials.map(({ key, label, icon: Icon }) => (
-                  <a
-                    key={key}
-                    href={institution.socials[key]}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-black/10 px-3 py-2 text-sm text-copy transition-all duration-300 hover:border-accent/30 hover:text-white"
-                  >
-                    <Icon className="h-3.5 w-3.5 text-accent" />
-                    {label}
-                  </a>
-                ))}
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-4">
+                <div className="flex items-center gap-2">
+                  <FaUserGroup className="h-4 w-4 text-accent" />
+                  <p className="text-sm font-semibold text-white">Contactos adicionales</p>
+                </div>
+                {institution.additionalContacts?.length ? (
+                  <div className="mt-4 space-y-3">
+                    {institution.additionalContacts.map((contact) => (
+                      <article key={contact._id} className="rounded-2xl border border-white/10 bg-black/10 p-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <p className="text-sm font-medium text-white">
+                              {contact.firstName} {contact.lastName}
+                            </p>
+                            <p className="mt-1 text-xs text-subtle">{contact.role || "Sin cargo cargado"}</p>
+                          </div>
+                          {contact.phone ? (
+                            <Button
+                              as="a"
+                              href={createWhatsappUrl(contact.phone)}
+                              target="_blank"
+                              rel="noreferrer"
+                              variant="secondary"
+                              size="sm"
+                            >
+                              <FaWhatsapp className="h-3.5 w-3.5" />
+                              WhatsApp
+                            </Button>
+                          ) : null}
+                        </div>
+                        <div className="mt-3 space-y-1 text-xs text-subtle">
+                          <p className="flex items-center gap-2">
+                            <FaEnvelope className="h-3 w-3" />
+                            {contact.email || "-"}
+                          </p>
+                          <p className="flex items-center gap-2">
+                            <FaPhone className="h-3 w-3" />
+                            {contact.phone || "-"}
+                          </p>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="mt-3 text-sm text-subtle">No se cargaron contactos secundarios.</p>
+                )}
               </div>
-            ) : (
-              <p className="mt-3 text-sm text-subtle">No se cargaron redes institucionales.</p>
-            )}
-          </div>
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm text-subtle">
-            {institution.notes || "Sin observaciones generales."}
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-4">
+                <p className="text-sm font-semibold text-white">Redes institucionales</p>
+                {visibleSocials.length ? (
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {visibleSocials.map(({ key, label, icon: Icon }) => (
+                      <a
+                        key={key}
+                        href={institution.socials[key]}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-black/10 px-3 py-2 text-sm text-copy transition-all duration-300 hover:border-accent/30 hover:text-white"
+                      >
+                        <Icon className="h-3.5 w-3.5 text-accent" />
+                        {label}
+                      </a>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="mt-3 text-sm text-subtle">No se cargaron redes institucionales.</p>
+                )}
+              </div>
+            </div>
           </div>
         </Card>
 
@@ -299,14 +312,6 @@ export function InstitutionDetailPage() {
           </div>
         </Card>
       </section>
-
-      <CommunicationPanel
-        institutionId={institution._id}
-        contacts={communicationContacts}
-        selectedContactId={selectedContactId}
-        preferredChannel={preferredChannel}
-        onSelectedContactChange={setSelectedContactId}
-      />
 
       <ConfirmationModal
         open={isDeleteModalOpen}

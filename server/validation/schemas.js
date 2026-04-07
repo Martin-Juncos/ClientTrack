@@ -90,13 +90,6 @@ const optionalTaskStatusFilter = z.preprocess(
   z.enum(taskStatuses.map((item) => item.value)).optional()
 );
 
-const communicationBaseSchema = z.object({
-  institutionId: objectIdSchema,
-  opportunityId: objectIdSchema.optional(),
-  targetName: z.string().trim().min(1, "Indica el nombre del contacto."),
-  targetRole: optionalString(120)
-});
-
 const contactInputSchema = z
   .object({
     firstName: z.string().trim().min(1, "Indica el nombre del contacto."),
@@ -129,6 +122,8 @@ export const institutionInputSchema = z
     type: z.enum(institutionTypes.map((item) => item.value)),
     city: optionalString(120),
     province: optionalString(120),
+    phone: optionalString(50),
+    address: optionalString(240),
     leadSource: optionalString(120),
     notes: optionalString(2000),
     responsibleId: objectIdSchema,
@@ -182,21 +177,6 @@ export const taskInputSchema = z
     path: ["institutionId"]
   });
 
-export const communicationEmailInputSchema = communicationBaseSchema.extend({
-  targetEmail: z.string().trim().email("Email invalido"),
-  subject: z.string().trim().min(3, "Indica el asunto del email."),
-  body: z.string().trim().min(5, "Escribe el contenido del email.")
-});
-
-export const communicationWhatsappInputSchema = communicationBaseSchema.extend({
-  targetPhone: z.string().trim().min(6, "Indica un telefono valido."),
-  body: z.string().trim().min(3, "Escribe el mensaje de WhatsApp.")
-});
-
-export const communicationListFiltersSchema = z.object({
-  institutionId: objectIdSchema.optional(),
-  opportunityId: objectIdSchema.optional()
-});
 export const institutionListFiltersSchema = z.object({
   type: optionalInstitutionTypeFilter,
   responsibleId: optionalObjectIdFilter,
@@ -241,18 +221,6 @@ export function validateInteractionInput(payload) {
 
 export function validateTaskInput(payload) {
   return taskInputSchema.parse(payload);
-}
-
-export function validateCommunicationEmailInput(payload) {
-  return communicationEmailInputSchema.parse(payload);
-}
-
-export function validateCommunicationWhatsappInput(payload) {
-  return communicationWhatsappInputSchema.parse(payload);
-}
-
-export function validateCommunicationListFilters(payload) {
-  return communicationListFiltersSchema.parse(payload);
 }
 
 export function validateInstitutionFilters(payload) {

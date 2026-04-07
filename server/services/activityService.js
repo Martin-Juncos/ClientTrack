@@ -1,9 +1,8 @@
-import { Communication } from "../models/Communication.js";
 import { Interaction } from "../models/Interaction.js";
 import { Task } from "../models/Task.js";
 
 export async function getRecentActivity() {
-  const [interactions, tasks, communications] = await Promise.all([
+  const [interactions, tasks] = await Promise.all([
     Interaction.find()
       .populate("createdBy", "name")
       .populate("opportunityId", "status solutionType")
@@ -14,11 +13,6 @@ export async function getRecentActivity() {
       .populate("institutionId", "name")
       .populate("responsibleId", "name")
       .sort({ updatedAt: -1 })
-      .limit(12)
-      .lean(),
-    Communication.find()
-      .populate("createdBy", "name")
-      .sort({ sentAt: -1 })
       .limit(12)
       .lean()
   ]);
@@ -39,17 +33,6 @@ export async function getRecentActivity() {
       timestamp: item.updatedAt,
       detail: item.status,
       createdBy: item.responsibleId?.name ?? "Sin responsable"
-    })),
-    ...communications.map((item) => ({
-      id: item._id.toString(),
-      type: item.channel,
-      title:
-        item.channel === "email"
-          ? `Email a ${item.targetName || item.targetEmail}`
-          : `WhatsApp a ${item.targetName || item.targetPhone}`,
-      timestamp: item.sentAt,
-      detail: item.subject || item.body,
-      createdBy: item.createdBy?.name ?? "Sin usuario"
     }))
   ]
     .sort((left, right) => new Date(right.timestamp) - new Date(left.timestamp))

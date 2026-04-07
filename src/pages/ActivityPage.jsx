@@ -32,7 +32,7 @@ export function ActivityPage() {
       <PageHeader
         eyebrow="Pulse del sistema"
         title="Actividad reciente"
-        description="Mira rapidamente que se movio, quien intervino y que conversaciones cambiaron."
+        description="Mira rapidamente que se movio y quien intervino en el CRM."
       />
       {error ? <ErrorState message={error} onAction={loadActivity} /> : <ActivityFeed items={data.feed} />}
     </div>

@@ -36,7 +36,6 @@ En local, la API carga `.env` automaticamente desde la raiz del proyecto al inic
 - Seguimientos / tareas
 - Pipeline Kanban
 - Busqueda y filtros
-- Comunicaciones salientes con email y acceso rapido a WhatsApp
 
 ## Arquitectura
 
@@ -68,12 +67,6 @@ En local, la API carga `.env` automaticamente desde la raiz del proyecto al inic
 6. Desplegar y validar `GET /api/health` y `GET /api/ready`.
 
 Consulta [CONFIG.md](./CONFIG.md) para variables y setup.
-
-Importante para email saliente por SMTP: configurar `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` y `EMAIL_FROM`.
-
-Si usas Gmail SMTP, el setup recomendado es `smtp.gmail.com:465`, `SMTP_SECURE=true`, `SMTP_USER=<tu_gmail>` y `SMTP_PASS=<app_password_de_google>`.
-
-Con Gmail, `EMAIL_FROM` debe coincidir con la cuenta autenticada en `SMTP_USER`, por ejemplo `ClientTrack <tu_cuenta@gmail.com>`.
 
 ## Endpoints operativos
 

@@ -5,7 +5,6 @@ import {
   opportunityStates
 } from "../../shared/catalogs.js";
 import { ApiError } from "../http/apiError.js";
-import { Communication } from "../models/Communication.js";
 import { Institution } from "../models/Institution.js";
 import { Interaction } from "../models/Interaction.js";
 import { Opportunity } from "../models/Opportunity.js";
@@ -28,6 +27,8 @@ async function resolveInstitutionSearch(search) {
   const institutions = await Institution.find({
     $or: [
       { name: regex },
+      { phone: regex },
+      { address: regex },
       { "primaryContact.firstName": regex },
       { "primaryContact.lastName": regex },
       { "primaryContact.email": regex },
@@ -211,7 +212,6 @@ export async function deleteOpportunity(id) {
         throw new ApiError(404, "La oportunidad no existe.", "opportunity_not_found");
       }
 
-      await Communication.deleteMany({ opportunityId }).session(session);
       await Interaction.deleteMany({ opportunityId }).session(session);
       await Task.deleteMany({ opportunityId }).session(session);
       await Opportunity.findByIdAndDelete(opportunityId).session(session);

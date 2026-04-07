@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import {
-  validateCommunicationEmailInput,
   validateInstitutionInput,
   validateOpportunityInput,
   validateTaskInput
@@ -13,6 +12,8 @@ describe("validation schemas", () => {
       type: "clinic",
       city: "San Rafael",
       province: "Mendoza",
+      phone: "2604123456",
+      address: "Av. Mitre 123",
       leadSource: "Referido",
       notes: "",
       responsibleId: "507f1f77bcf86cd799439011",
@@ -38,6 +39,8 @@ describe("validation schemas", () => {
     });
 
     expect(payload.name).toBe("Clinica Aurora");
+    expect(payload.phone).toBe("2604123456");
+    expect(payload.address).toBe("Av. Mitre 123");
     expect(payload.socials.linkedin).toContain("linkedin.com");
     expect(payload.additionalContacts).toHaveLength(1);
   });
@@ -67,20 +70,5 @@ describe("validation schemas", () => {
 
     expect(payload.estimatedBudget).toBe(250000);
     expect(payload.winProbability).toBe(60);
-  });
-
-  it("valida un email de comunicacion saliente", () => {
-    const payload = validateCommunicationEmailInput({
-      institutionId: "507f1f77bcf86cd799439011",
-      opportunityId: "507f1f77bcf86cd799439012",
-      targetName: "Ana Lopez",
-      targetRole: "Directora",
-      targetEmail: "ana@example.com",
-      subject: "Seguimiento comercial",
-      body: "Te comparto una propuesta resumida."
-    });
-
-    expect(payload.targetEmail).toBe("ana@example.com");
-    expect(payload.subject).toBe("Seguimiento comercial");
   });
 });

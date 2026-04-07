@@ -45,6 +45,16 @@ const institutionSchema = new mongoose.Schema(
       trim: true,
       default: ""
     },
+    phone: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+    address: {
+      type: String,
+      trim: true,
+      default: ""
+    },
     leadSource: {
       type: String,
       trim: true,
@@ -81,6 +91,7 @@ const institutionSchema = new mongoose.Schema(
 
 institutionSchema.index({ name: 1 });
 institutionSchema.index({ type: 1 });
+institutionSchema.index({ phone: 1 });
 institutionSchema.index({ "primaryContact.email": 1 });
 institutionSchema.index({ "primaryContact.phone": 1 });
 institutionSchema.index({ "additionalContacts.email": 1 });

@@ -24,24 +24,14 @@
 | `JWT_EXPIRES_IN` | string | `7d` | Expiracion de sesion |
 | `COOKIE_NAME` | string | `clienttrack_session` | Nombre de la cookie de sesion |
 | `VERCEL_URL` | string | provista por Vercel | Hostname del deployment. La app la usa para aceptar el origin del deployment actual en preview y production |
-| `SMTP_HOST` | string | - | Host del servidor SMTP. Ejemplo con Gmail: `smtp.gmail.com` |
-| `SMTP_PORT` | number | - | Puerto SMTP. Ejemplo recomendado con TLS implicito: `465` |
-| `SMTP_SECURE` | boolean | `true` si `SMTP_PORT=465`, si no `false` | Fuerza TLS implicito cuando aplica |
-| `SMTP_USER` | string | - | Usuario SMTP autenticado. En Gmail debe ser la cuenta completa |
-| `SMTP_PASS` | string | - | Password SMTP o app password del proveedor. En Gmail debe ser una Google App Password |
-| `EMAIL_FROM` | string | - | Remitente usado por SMTP, por ejemplo `ClientTrack <ventas@tu-dominio.com>`. Debe pertenecer a un dominio valido y, si aplica, verificado en el proveedor |
 
 ## Flujo de arranque
 
 1. Copiar `.env.example` a `.env`.
 2. Configurar `MONGODB_URI` y `JWT_SECRET`.
 3. Definir los dos usuarios administradores.
-4. Si vas a usar email saliente, descomentar y configurar `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` y `EMAIL_FROM`.
-5. Opcionalmente definir `SMTP_SECURE`. Si no se define, la app usa `true` para puerto `465` y `false` para otros puertos.
-6. Si usas Gmail SMTP, usar `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=465`, `SMTP_SECURE=true`, `SMTP_USER=<tu_gmail>` y `SMTP_PASS=<google_app_password>`.
-7. Con Gmail, `EMAIL_FROM` debe coincidir con la cuenta autenticada en `SMTP_USER`.
-8. Ejecutar `npm install`.
-9. Ejecutar `npm run dev`.
+4. Ejecutar `npm install`.
+5. Ejecutar `npm run dev`.
 
 ## Despliegue en Vercel
 
@@ -49,7 +39,6 @@
 2. Verificar que el proyecto use Node.js `22.x`.
 3. Cargar estas variables de entorno en `Production`, `Preview` y `Development`:
    `MONGODB_URI`, `JWT_SECRET`, `APP_ORIGIN`, `ALLOWED_APP_ORIGINS`, `COOKIE_NAME`, `JWT_EXPIRES_IN`,
-   `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `EMAIL_FROM`,
    `ADMIN_USER_1_NAME`, `ADMIN_USER_1_EMAIL`, `ADMIN_USER_1_PASSWORD`,
    `ADMIN_USER_2_NAME`, `ADMIN_USER_2_EMAIL`, `ADMIN_USER_2_PASSWORD`.
 4. Definir `APP_ORIGIN` con la URL publica canonica del proyecto.
@@ -81,7 +70,3 @@
 - En `production`, la app rechaza placeholders obvios en secretos y credenciales para evitar despliegues incompletos.
 - La aplicacion crea o sincroniza los dos admins desde variables de entorno al iniciar sesion.
 - La autenticacion privada usa solo cookie JWT `httpOnly`; no hay soporte para bearer token ni login social.
-- Si no defines SMTP, el modulo de comunicaciones seguira mostrando WhatsApp y el envio de email respondera con error de configuracion.
-- Si defines solo una parte del set SMTP, la app fallara al iniciar con un error claro para evitar despliegues inconsistentes.
-- Si el servidor SMTP rechaza autenticacion, conexion, remitente o destinatario, la app no registrara el email como `sent` y devolvera un error operativo claro.
-- Si usas Gmail SMTP, crear una Google App Password y no usar la contrasena normal de la cuenta.

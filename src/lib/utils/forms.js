@@ -37,6 +37,8 @@ export function createInstitutionForm(initial = {}) {
     type: "clinic",
     city: "",
     province: "",
+    phone: "",
+    address: "",
     leadSource: "",
     notes: "",
     responsibleId: "",
@@ -94,19 +96,6 @@ export function createTaskForm(initial = {}) {
     dueAt: "",
     status: "pending",
     comment: "",
-    ...initial
-  };
-}
-
-export function createCommunicationForm(initial = {}) {
-  return {
-    channel: "email",
-    targetName: "",
-    targetRole: "",
-    targetEmail: "",
-    targetPhone: "",
-    subject: "",
-    body: "",
     ...initial
   };
 }

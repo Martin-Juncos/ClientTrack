@@ -32,10 +32,6 @@ vi.mock("../src/lib/api/opportunitiesApi.js", () => ({
   }
 }));
 
-vi.mock("../src/modules/communications/CommunicationPanel.jsx", () => ({
-  CommunicationPanel: () => <div>Communication panel</div>
-}));
-
 function renderPage() {
   return render(
     <MemoryRouter initialEntries={["/instituciones/inst-1"]}>
@@ -136,5 +132,15 @@ describe("InstitutionDetailPage", () => {
 
     expect(await within(dialog).findByText("No se pudo borrar la institucion")).toBeInTheDocument();
     expect(mockState.navigate).not.toHaveBeenCalled();
+  });
+
+  it("muestra un acceso directo a WhatsApp para el contacto principal", async () => {
+    renderPage();
+
+    expect(await screen.findByRole("heading", { name: "Clinica Central" })).toBeInTheDocument();
+
+    const whatsappLink = screen.getByRole("link", { name: /WhatsApp/i });
+    expect(whatsappLink).toHaveAttribute("href", "https://wa.me/123456");
+    expect(whatsappLink).toHaveAttribute("target", "_blank");
   });
 });

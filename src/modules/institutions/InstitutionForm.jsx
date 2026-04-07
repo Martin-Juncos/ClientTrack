@@ -139,6 +139,26 @@ export function InstitutionForm({
           <FormField label="Provincia / ubicacion" error={getFieldError("province")}>
             <Input invalid={Boolean(getFieldError("province"))} value={form.province} onChange={(event) => onChange("province", event.target.value)} />
           </FormField>
+          <FormField label="Telefono institucional" error={getFieldError("phone")}>
+            <div className="relative">
+              <FaPhone className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-subtle" />
+              <Input
+                invalid={Boolean(getFieldError("phone"))}
+                className="pl-11"
+                value={form.phone}
+                onChange={(event) => onChange("phone", event.target.value)}
+                placeholder="Telefono general de la institucion"
+              />
+            </div>
+          </FormField>
+          <FormField label="Direccion institucional" error={getFieldError("address")}>
+            <Input
+              invalid={Boolean(getFieldError("address"))}
+              value={form.address}
+              onChange={(event) => onChange("address", event.target.value)}
+              placeholder="Calle, numero, piso o referencia"
+            />
+          </FormField>
           <FormField label="Fuente del lead" error={getFieldError("leadSource")}>
             <Input invalid={Boolean(getFieldError("leadSource"))} value={form.leadSource} onChange={(event) => onChange("leadSource", event.target.value)} />
           </FormField>
