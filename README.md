@@ -28,7 +28,7 @@ En local, la API carga `.env` automaticamente desde la raiz del proyecto al inic
 
 ## MVP incluido
 
-- Login privado para 2 administradores
+- Login privado para 3 administradores
 - Dashboard accionable
 - CRUD de instituciones
 - CRUD de oportunidades

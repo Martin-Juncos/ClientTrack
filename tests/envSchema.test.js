@@ -14,7 +14,10 @@ const baseEnv = {
   ADMIN_USER_1_PASSWORD: "password123",
   ADMIN_USER_2_NAME: "Admin Dos",
   ADMIN_USER_2_EMAIL: "admin2@example.com",
-  ADMIN_USER_2_PASSWORD: "password456"
+  ADMIN_USER_2_PASSWORD: "password456",
+  ADMIN_USER_3_NAME: "Admin Tres",
+  ADMIN_USER_3_EMAIL: "admin3@example.com",
+  ADMIN_USER_3_PASSWORD: "password789"
 };
 
 describe("env schema", () => {
@@ -46,7 +49,9 @@ describe("env schema", () => {
         ADMIN_USER_1_EMAIL: "admin1@example.com",
         ADMIN_USER_1_PASSWORD: "replace_with_a_strong_password",
         ADMIN_USER_2_EMAIL: "admin2@example.com",
-        ADMIN_USER_2_PASSWORD: "replace_with_a_strong_password"
+        ADMIN_USER_2_PASSWORD: "replace_with_a_strong_password",
+        ADMIN_USER_3_EMAIL: "admin3@example.com",
+        ADMIN_USER_3_PASSWORD: "replace_with_a_strong_password"
       })
     ).toThrow(/contiene un valor de ejemplo/i);
   });

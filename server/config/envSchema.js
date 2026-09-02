@@ -39,8 +39,10 @@ const productionPlaceholderChecks = {
   JWT_SECRET: [/^replace_with_/i],
   ADMIN_USER_1_EMAIL: [/@example\.com$/i],
   ADMIN_USER_2_EMAIL: [/@example\.com$/i],
+  ADMIN_USER_3_EMAIL: [/@example\.com$/i],
   ADMIN_USER_1_PASSWORD: [/^replace_with_/i],
-  ADMIN_USER_2_PASSWORD: [/^replace_with_/i]
+  ADMIN_USER_2_PASSWORD: [/^replace_with_/i],
+  ADMIN_USER_3_PASSWORD: [/^replace_with_/i]
 };
 
 function isObviousPlaceholder(fieldName, value) {
@@ -67,7 +69,10 @@ const envSchema = z
     ADMIN_USER_1_PASSWORD: z.string().min(8, "ADMIN_USER_1_PASSWORD debe tener al menos 8 caracteres"),
     ADMIN_USER_2_NAME: z.string().min(1, "ADMIN_USER_2_NAME es obligatorio"),
     ADMIN_USER_2_EMAIL: z.string().email("ADMIN_USER_2_EMAIL invalido"),
-    ADMIN_USER_2_PASSWORD: z.string().min(8, "ADMIN_USER_2_PASSWORD debe tener al menos 8 caracteres")
+    ADMIN_USER_2_PASSWORD: z.string().min(8, "ADMIN_USER_2_PASSWORD debe tener al menos 8 caracteres"),
+    ADMIN_USER_3_NAME: z.string().min(1, "ADMIN_USER_3_NAME es obligatorio"),
+    ADMIN_USER_3_EMAIL: z.string().email("ADMIN_USER_3_EMAIL invalido"),
+    ADMIN_USER_3_PASSWORD: z.string().min(8, "ADMIN_USER_3_PASSWORD debe tener al menos 8 caracteres")
   })
   .superRefine((data, ctx) => {
     if (data.NODE_ENV === "production") {

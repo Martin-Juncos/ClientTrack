@@ -12,6 +12,9 @@
 | `ADMIN_USER_2_NAME` | string | Seed del admin 2 |
 | `ADMIN_USER_2_EMAIL` | string | Seed del admin 2 |
 | `ADMIN_USER_2_PASSWORD` | string | Seed del admin 2 |
+| `ADMIN_USER_3_NAME` | string | Seed del admin 3 |
+| `ADMIN_USER_3_EMAIL` | string | Seed del admin 3 |
+| `ADMIN_USER_3_PASSWORD` | string | Seed del admin 3 |
 
 ## Variables opcionales
 
@@ -29,7 +32,7 @@
 
 1. Copiar `.env.example` a `.env`.
 2. Configurar `MONGODB_URI` y `JWT_SECRET`.
-3. Definir los dos usuarios administradores.
+3. Definir los tres usuarios administradores.
 4. Ejecutar `npm install`.
 5. Ejecutar `npm run dev`.
 
@@ -40,7 +43,8 @@
 3. Cargar estas variables de entorno en `Production`, `Preview` y `Development`:
    `MONGODB_URI`, `JWT_SECRET`, `APP_ORIGIN`, `ALLOWED_APP_ORIGINS`, `COOKIE_NAME`, `JWT_EXPIRES_IN`,
    `ADMIN_USER_1_NAME`, `ADMIN_USER_1_EMAIL`, `ADMIN_USER_1_PASSWORD`,
-   `ADMIN_USER_2_NAME`, `ADMIN_USER_2_EMAIL`, `ADMIN_USER_2_PASSWORD`.
+   `ADMIN_USER_2_NAME`, `ADMIN_USER_2_EMAIL`, `ADMIN_USER_2_PASSWORD`,
+   `ADMIN_USER_3_NAME`, `ADMIN_USER_3_EMAIL`, `ADMIN_USER_3_PASSWORD`.
 4. Definir `APP_ORIGIN` con la URL publica canonica del proyecto.
    Ejemplo: `https://clienttrack.tu-dominio.vercel.app`
 5. Si manejas mas de un origin valido para requests mutables, definir `ALLOWED_APP_ORIGINS`.
@@ -68,5 +72,5 @@
 - En Vercel, define estas variables solo en Project Settings.
 - Usa un `JWT_SECRET` aleatorio de al menos 32 caracteres.
 - En `production`, la app rechaza placeholders obvios en secretos y credenciales para evitar despliegues incompletos.
-- La aplicacion crea o sincroniza los dos admins desde variables de entorno al iniciar sesion.
+- La aplicacion crea o sincroniza los tres admins desde variables de entorno al iniciar sesion.
 - La autenticacion privada usa solo cookie JWT `httpOnly`; no hay soporte para bearer token ni login social.

@@ -22,5 +22,10 @@ export const adminSeedUsers = [
     name: env.ADMIN_USER_2_NAME,
     email: env.ADMIN_USER_2_EMAIL.toLowerCase(),
     password: env.ADMIN_USER_2_PASSWORD
+  },
+  {
+    name: env.ADMIN_USER_3_NAME,
+    email: env.ADMIN_USER_3_EMAIL.toLowerCase(),
+    password: env.ADMIN_USER_3_PASSWORD
   }
 ];
